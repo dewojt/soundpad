@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Pad Pagelaran Pro - 12 Pads</title>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --container-bg: #1a1a1a;
+            --pad-color: #2c3e50;
+            --pad-hover: #3e5871;
+            --pad-active: #3498db;
+            --text-primary: #ffffff;
+            --text-secondary: #999;
+            --accent-loop: #f1c40f;
+            --accent-multi: #2ecc71;
+            --stop-btn: #e74c3c;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        /* Container Utama */
+        .main-container {
+            background: var(--container-bg);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 850px;
+        }
+
+        /* Layout Baris: 4 Tombol + 1 Stop */
+        .sound-row {
+            display: flex;
+            align-items: stretch;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .sound-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* Pad Wrapper */
+        .pad-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: #222;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            flex: 1;
+            /* Agar ukuran tombol rata */
+            min-width: 80px;
+        }
+
+        .pad {
+            width: 100%;
+            height: 70px;
+            background-color: var(--pad-color);
+            border: 2px solid #1a252f;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 3px 0 #1a252f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .pad.playing {
+            background-color: var(--pad-active);
+            box-shadow: 0 0 12px rgba(52, 152, 219, 0.5);
+            border-color: #fff;
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #1a252f;
+        }
+
+        /* Checkbox Controls */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            width: 100%;
+        }
+
+        .control-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .control-label input {
+            transform: scale(0.8);
+            margin: 0;
+        }
+
+        .check-loop:checked+span {
+            color: var(--accent-loop);
+            font-weight: bold;
+        }
+
+        .check-multi:checked+span {
+            color: var(--accent-multi);
+            font-weight: bold;
+        }
+
+        /* Tombol Stop Per Baris */
+        .row-stop-btn {
+            background-color: var(--stop-btn);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.65rem;
+            box-shadow: 0 3px 0 #c0392b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+        }
+
+        .row-stop-btn:active {
+            transform: rotate(180deg) translateY(-2px);
+            box-shadow: 0 1px 0 #c0392b;
+        }
+
+        /* Global Stop Button (Bawah) */
+        .stop-all-bottom {
+            margin-top: 15px;
+            padding: 12px;
+            width: 100%;
+            max-width: 850px;
+            background: #333;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Responsiveness untuk layar kecil */
+        @media (max-width: 600px) {
+            .sound-row {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .row-stop-btn {
+                width: 100%;
+                writing-mode: horizontal-tb;
+                transform: none;
+                grid-column: span 2;
+                height: 30px;
+            }
+
+            .row-stop-btn:active {
+                transform: translateY(2px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>SOUND PAD 12 CONTROL</h1>
+        <div class="subtitle">12 Tombol (4 Per Baris) • Loop & Multi Support</div>
+    </header>
+
+    <div class="main-container" id="mainContainer">
+    </div>
+
+    <button class="stop-all-bottom" onclick="stopAllAudio()">⏹ EMERGENCY STOP ALL</button>
+
+    <script>
+        // Data 12 Tombol Audio
+        const sounds = [
+            { label: "TARI", file: "TARI.mp3" },
+            { label: "NARATOR 1", file: "narator1.mp3" },
+            { label: "SCENE 1", file: "scene1.mp3" },
+            { label: "NARATOR 2", file: "narator2.mp3" },
+            { label: "BOM", file: "bom.mp3" },
+            { label: "NARATOR 3", file: "narator3.mp3" },
+            { label: "RADIO", file: "radio.mp3" },
+            { label: "NARATOR 4", file: "narator4.mp3" },
+            { label: "HALO-HALO BANDUNG", file: "halohalo.mp3" },
+            { label: "backup", file: "no_identity.mp3" },
+            { label: "NARATOR FULL", file: "narator_full.mp3" },
+            { label: "no sound", file: "no_sound.mp3" }
+        ];
+
+        const audioInstances = {};
+        const mainContainer = document.getElementById('mainContainer');
+
+        // Render 3 Baris
+        for (let r = 0; r < 3; r++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'sound-row';
+
+            // Render 4 Tombol per Baris
+            for (let c = 0; c < 4; c++) {
+                const index = (r * 4) + c;
+                const sound = sounds[index];
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'pad-wrapper';
+                wrapper.innerHTML = `
+                    <button class="pad" id="pad-${index}">
+                        ${(index + 1).toString().padStart(2, '0')}<br>${sound.label}
+                    </button>
+                    <div class="controls">
+                        <label class="control-label">
+                            <input type="checkbox" class="check-loop" id="loop-${index}"> <span>Loop</span>
+                        </label>
+                        <label class="control-label">
+                            <input type="checkbox" class="check-multi" id="multi-${index}"> <span>Multi</span>
+                        </label>
+                    </div>
+                `;
+                rowDiv.appendChild(wrapper);
+
+                // Load Audio
+                audioInstances[index] = new Audio(`audio/${sound.file}`);
+
+                // Logic Audio
+                setTimeout(() => {
+                    const btn = document.getElementById(`pad-${index}`);
+                    const loopCheck = document.getElementById(`loop-${index}`);
+                    const multiCheck = document.getElementById(`multi-${index}`);
+
+                    btn.addEventListener('click', () => {
+                        // Jika Multi OFF, matikan audio lain (kecuali yang sedang multi)
+                        if (!multiCheck.checked) stopOtherAudios(index);
+
+                        const currentAudio = audioInstances[index];
+                        currentAudio.loop = loopCheck.checked;
+                        currentAudio.currentTime = 0;
+                        currentAudio.play();
+
+                        btn.classList.add('playing');
+
+                        currentAudio.onended = () => {
+                            if (!currentAudio.loop) btn.classList.remove('playing');
+                        };
+                    });
+
+                    // Update loop status real-time
+                    loopCheck.addEventListener('change', () => {
+                        audioInstances[index].loop = loopCheck.checked;
+                    });
+                }, 0);
+            }
+
+            // Tombol STOP GLOBAL di tiap baris
+            const rowStopBtn = document.createElement('button');
+            rowStopBtn.className = 'row-stop-btn';
+            rowStopBtn.innerText = 'STOP ALL';
+            rowStopBtn.onclick = stopAllAudio;
+            rowDiv.appendChild(rowStopBtn);
+
+            mainContainer.appendChild(rowDiv);
+        }
+
+        // Fungsi mematikan audio lain jika mode Single aktif
+        function stopOtherAudios(currentIndex) {
+            for (let key in audioInstances) {
+                if (key != currentIndex) {
+                    audioInstances[key].pause();
+                    audioInstances[key].currentTime = 0;
+                    const el = document.getElementById(`pad-${key}`);
+                    if (el) el.classList.remove('playing');
+                }
+            }
+        }
+
+        // Fungsi mematikan semua audio tanpa kecuali
+        function stopAllAudio() {
+            for (let key in audioInstances) {
+                audioInstances[key].pause();
+                audioInstances[key].currentTime = 0;
+            }
+            document.querySelectorAll('.pad').forEach(p => p.classList.remove('playing'));
+        }
+    </script>
+</body>
+
+</html>
